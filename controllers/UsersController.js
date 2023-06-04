@@ -22,13 +22,7 @@ class UsersController {
     const finalRequestBody = { email: req.body.email, password: hashPassword };
 
     const result = await DBClient.db.collection('users')
-      .insertOne(finalRequestBody, (err) => {
-        if (err) {
-          console.log('An error was encountered while saving user', err);
-        } else {
-          console.log('New User successfully created');
-        }
-      });
+      .insertOne(finalRequestBody);
 
     return res
       .status(201)
