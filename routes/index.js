@@ -5,6 +5,7 @@ const express = require('express');
 
 const router = (app) => {
   const route = express.Router();
+  app.use(express.json());
   app.use('/', route);
 
   route.get('/status', (req, res) => AppController.getStatus(req, res));
