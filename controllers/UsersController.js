@@ -3,10 +3,10 @@ import DBClient from '../utils/db';
 
 class UsersController {
   static async postNew(req, res) {
-    if (req.body.email === '') {
+    if (!req.body.email) {
       return res.status(400).send({ error: 'Missing email' });
     }
-    if (req.body.password === '') {
+    if (!req.body.password) {
       return res.status(400).send({ error: 'Missing password' });
     }
 
@@ -16,7 +16,7 @@ class UsersController {
       .findOne({ email: req.body.email });
 
     if (existingEmail) {
-      res.status(400).send({ error: 'Already exist' });
+      return res.status(400).send({ error: 'Already exist' });
     }
 
     const finalRequestBody = { email: req.body.email, password: hashPassword };
