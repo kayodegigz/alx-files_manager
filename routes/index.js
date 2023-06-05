@@ -17,5 +17,7 @@ const router = (app) => {
   route.get('/disconnect', (req, res) => AuthController.getDisconnect(req, res));
   route.get('/users/me', (req, res) => UsersController.getMe(req, res));
   route.post('/files', (req, res) => FilesController.postUpload(req, res));
+  route.get('/files/:id', (req, res) => FilesController.getShow(req, res));
+  route.get('/files', (req, res) => FilesController.getIndex(req, res));
 };
 export default router;

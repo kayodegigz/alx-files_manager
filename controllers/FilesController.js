@@ -100,12 +100,12 @@ class FilesController {
     const token = req.header('X-Token') || null;
     if (!token) return res.status(401).send({ error: 'Unauthorized' });
 
-    const redisToken = await RedisClient.get(`auth_${token}`);
-    if (!redisToken) return res.status(401).send({ error: 'Unauthorized' });
+    const redisUserIdkey = await RedisClient.get(`auth_${token}`);
+    if (!redisUserIdkey) return res.status(401).send({ error: 'Unauthorized' });
 
     const user = await DBClient.db
       .collection('users')
-      .findOne({ _id: ObjectId(redisToken) });
+      .findOne({ _id: ObjectId(redisUserIdkey) });
     if (!user) return res.status(401).send({ error: 'Unauthorized' });
 
     const idFile = req.params.id || '';
@@ -130,12 +130,12 @@ class FilesController {
     const token = req.header('X-Token') || null;
     if (!token) return res.status(401).send({ error: 'Unauthorized' });
 
-    const redisToken = await RedisClient.get(`auth_${token}`);
-    if (!redisToken) return res.status(401).send({ error: 'Unauthorized' });
+    const redisUserId = await RedisClient.get(`auth_${token}`);
+    if (!redisUserId) return res.status(401).send({ error: 'Unauthorized' });
 
     const user = await DBClient.db
       .collection('users')
-      .findOne({ _id: ObjectId(redisToken) });
+      .findOne({ _id: ObjectId(redisUserId) });
     if (!user) return res.status(401).send({ error: 'Unauthorized' });
 
     const parentId = req.query.parentId || 0;
@@ -147,8 +147,11 @@ class FilesController {
 
     const aggregationMatch = { $and: [{ parentId }] };
     let aggregateData = [
+      // match anything that meets this criteria
       { $match: aggregationMatch },
+      // after looking for match, skip to the next 20
       { $skip: pagination * 20 },
+      // only 20 should be returned at a go
       { $limit: 20 },
     ];
     if (parentId === 0) aggregateData = [{ $skip: pagination * 20 }, { $limit: 20 }];
