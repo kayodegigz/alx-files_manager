@@ -294,23 +294,30 @@ class FilesController {
     const idFile = req.params.id || '';
     const size = req.query.size || 0;
 
+    let user = null;
+    let owner = false;
     const token = req.header('X-Token') || null;
     // if (!token) return res.status(401).send({ error: 'Unauthorized' });
 
-    const redisUserId = await RedisClient.get(`auth_${token}`);
-    //if (!redisUserId) return res.status(401).send({ error: 'Unauthorized' });
-
-    const user = await DBClient.db
-      .collection('users')
-      .findOne({ _id: ObjectId(redisUserId) });
-
     const fileDocument = await DBClient.db
       .collection('files')
-      .findOne({ _id: ObjectId(idFile), userId: user._id });
+      .findOne({ _id: ObjectId(idFile) });
     if (!fileDocument) return res.status(404).send({ error: 'Not found' });
 
+    if (token) {
+      const redisUserId = await RedisClient.get(`auth_${token}`);
+      if (redisUserId) {
+        user = await DBClient.db
+          .collection('users')
+          .findOne({ _id: ObjectId(redisUserId) });
+        if (user) {
+          owner = user._id.toString() === fileDocument.userId.toString();
+        }
+      }
+    }
+
     if (!fileDocument.isPublic
-      && (!user || !(fileDocument.userId.toString() === user._id.toString()))) {
+      && !owner) {
       return res.status(404).send({ error: 'Not found' });
     }
 
