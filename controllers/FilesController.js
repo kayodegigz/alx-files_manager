@@ -295,10 +295,10 @@ class FilesController {
     const size = req.query.size || 0;
 
     const token = req.header('X-Token') || null;
-    if (!token) return res.status(401).send({ error: 'Unauthorized' });
+    // if (!token) return res.status(401).send({ error: 'Unauthorized' });
 
     const redisUserId = await RedisClient.get(`auth_${token}`);
-    if (!redisUserId) return res.status(401).send({ error: 'Unauthorized' });
+    //if (!redisUserId) return res.status(401).send({ error: 'Unauthorized' });
 
     const user = await DBClient.db
       .collection('users')
