@@ -20,6 +20,6 @@ const router = (app) => {
   route.get('/files/:id', (req, res) => FilesController.getShow(req, res));
   route.get('/files', (req, res) => FilesController.getIndex(req, res));
   route.put('/files/:id/publish', (req, res) => FilesController.putPublish(req, res));
-  route.put('/files/:id/publish', (req, res) => FilesController.putUnpublish(req, res));
+  route.put('/files/:id/unpublish', (req, res) => FilesController.putUnpublish(req, res));
 };
 export default router;
